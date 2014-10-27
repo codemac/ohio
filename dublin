@@ -1,0 +1,36 @@
+#!./rc/rc
+
+# You're from ohio, stop denying it.
+test -d $HOME/ohio || (echo Ohio doesn't exist at $HOME/ohio && exit 1)
+
+cd $HOME/ohio
+
+# first compile rc. Yes this is redundant.
+(
+        cd rc
+        ./configure --with-readline
+        make
+)
+
+# symlink over ohio's mr, vcsh, and rc. Make sure symlinks are
+# absolute and relative in the right places.
+(
+        cd $HOME
+        mkdir bin
+        cd bin
+        ln -s $HOME/ohio/vcsh/vcsh vcsh
+        ln -s $HOME/ohio/rc/rc rc
+        ln -s $HOME/ohio/myrepos/mr mr
+)
+
+# symlink over myrepos config
+(
+        cd $HOME
+        
+        ln -s $HOME/ohio/mrconfig .mrconfig
+        
+)
+
+cd $HOME
+./bin/mr update
+

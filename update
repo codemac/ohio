@@ -1,0 +1,29 @@
+#!./rc/rc
+
+repo_dirs=(
+        'rc' \
+        'myrepos' \
+        'vcsh' \
+)
+
+repos=(
+        'git@github.com:rakitzis/rc' \
+        'git://myrepos.branchable.com/' \
+        'git@github.com:RichiH/vcsh' \
+)
+
+shas=(
+    'master' \
+    'master' \
+    'master' \
+)
+
+for (i in `{seq 1 $#repos}) { #` #emacs highlighting sucks
+     test -d $repo_dirs($i) && rm -r $repo_dirs($i)
+     git clone $repos($i) $repo_dirs($i)
+     cd $repo_dirs($i)
+     git fetch origin
+     git checkout $shas($i)
+     rm -rf .git
+     cd ..
+}
