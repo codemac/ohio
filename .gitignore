@@ -1,0 +1,15 @@
+# this is mostly for rc builds
+*.o
+.deps
+rc/Makefile
+rc/config.h
+rc/config.log
+rc/config.status
+rc/mksignal
+rc/mkstatval
+rc/rc
+rc/sigmsgs.c
+rc/sigmsgs.h
+rc/stamp-h1
+rc/statval.h
+rc/tripping
