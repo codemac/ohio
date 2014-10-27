@@ -5,7 +5,7 @@ include = cat $HOME/ohio/myrepos/lib/git-annex
 checkout = git clone 'ssh://git.codemac.net/git/org.git' 'org'
 
 [doc]
-checkout =
+checkout = 
 	git clone 'ssh://git.codemac.net/git/doc.git' 'doc'
 	cd doc
 	git annex init
@@ -13,3 +13,6 @@ checkout =
 
 [config]
 checkout = git clone 'git@github.com:codemac/config.git' 'config'
+
+[ohio]
+checkout = git clone 'git@github.com:codemac/ohio.git' 'ohio'
