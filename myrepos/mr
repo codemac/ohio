@@ -1449,6 +1449,16 @@ sub loadconfig {
 				next;
 			}
 
+			if ($parameter eq 'jobs') {
+				print "mr: setting --jobs to \"$value\"\n" if $verbose;
+				unless ($value =~ /^\d+$/) {
+					print "mr: error: --jobs must be numeric\n";
+					exit 2
+				}
+				$jobs=$value;
+				next;
+			}
+
 			if (! defined $section) {
 				$lineerror->("parameter ($parameter) not in section");
 			}
@@ -1487,7 +1497,7 @@ sub loadconfig {
 							push @toload, ["$chaindir/.mrconfig", $chaindir];
 						}
 					}
-			        }
+				}
 			}
 		}
 		else {
@@ -1637,24 +1647,26 @@ sub dispatch {
 
 sub help {
 	my $help=q#
-		case `uname -s` in
-			SunOS)
-			SHOWMANFILE="man -f"
-			;;
-			Darwin)
-			SHOWMANFILE="man"
-			;;
-			*)
-			SHOWMANFILE="man"
-			;;
-		esac
 		if [ ! -e "$MR_PATH" ]; then
 			error "cannot find program path"
 		fi
 		tmp=$(mktemp -t mr.XXXXXXXXXX) || error "mktemp failed"
 		trap "rm -f $tmp" exit
 		pod2man -c mr "$MR_PATH" > "$tmp" || error "pod2man failed"
-		$SHOWMANFILE "$tmp" || error "man failed"
+		showman() {
+			case `uname -s` in
+				SunOS)
+				man -f "$tmp"
+				;;
+				OpenBSD)
+				mandoc "$tmp" | ${PAGER:-more}
+				;;
+				*)
+				man "$tmp"
+				;;
+			esac
+		}
+		showman "$tmp" || error "man failed"
 	#;
 	exec($help) || die "exec: $!";
 }
@@ -1881,9 +1893,15 @@ sub getopts {
 
 sub check {
 	my @env = qw(GIT_DIR GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_WORK_TREE VCSH_COMMAND VCSH_DIRECTORY VCSH_REPO_NAME);
+	my $error;
 	foreach (@env) {
-		die ("mr: environment variable '$_' is set. You are about to shoot your own foot.\n") if ($ENV{$_});
+		if ($ENV{$_}) {
+			$error=1;
+			print STDERR "mr: environment variable '$_' is set.\n";
+		}
 	}
+	die ("mr: The variables above would lead to very interesting effects.
+    Unfortunately, most of those effects result in data loss so we stop here.\n") if $error;
 }
 
 sub init {
@@ -1962,7 +1980,7 @@ lib =
 		if [ -z "$1" ] || [ -z "$2" ]; then
 			error "mr: usage: hours_since action num"
 		fi
-		for dir in .git .svn .bzr CVS .hg _darcs _FOSSIL_; do
+		for dir in .git .svn .bzr CVS .hg _darcs _FOSSIL_ .fslckout; do
 			if [ -e "$MR_REPO/$dir" ]; then
 				flagfile="$MR_REPO/$dir/.mr_last$1"
 				break
@@ -1996,7 +2014,7 @@ bzr_test = perl: -d "$ENV{MR_REPO}/.bzr"
 cvs_test = perl: -d "$ENV{MR_REPO}/CVS"
 hg_test  = perl: -d "$ENV{MR_REPO}/.hg"
 darcs_test = perl: -d "$ENV{MR_REPO}/_darcs"
-fossil_test = perl: -f "$ENV{MR_REPO}/_FOSSIL_"
+fossil_test = perl: -f "$ENV{MR_REPO}/_FOSSIL_" || -f "$ENV{MR_REPO}/.fslckout"
 git_bare_test = perl: 
 	-d "$ENV{MR_REPO}/refs/heads" && -d "$ENV{MR_REPO}/refs/tags" &&
 	-d "$ENV{MR_REPO}/objects" && -f "$ENV{MR_REPO}/config" &&
