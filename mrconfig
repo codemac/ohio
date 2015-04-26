@@ -17,3 +17,6 @@ pre_commit = git add -A emacs.d/elpa
 
 [ohio]
 checkout = git clone 'git@github.com:codemac/ohio.git' 'ohio'
+
+[beans]
+checkout = git clone 'ssh://git.codemac.net/git/beans.git' 'beans'
