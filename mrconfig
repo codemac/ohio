@@ -23,3 +23,4 @@ checkout = git clone 'ssh://git.codemac.net/git/beans.git' 'beans'
 
 [mail]
 checkout = git clone 'ssh://git.codemac.net/git/mail.git' 'mail'
+post_commit = git push origin
