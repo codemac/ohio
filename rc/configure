@@ -5587,7 +5587,7 @@ echo $ECHO_N "checking whether #! works in shell scripts... $ECHO_C" >&6
 if test "${ac_cv_sys_interpreter+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  echo '#! /bin/cat
+  echo '#! /usr/bin/env cat
 exit 69
 ' >conftest
 chmod u+x conftest
