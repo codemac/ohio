@@ -3,6 +3,8 @@ include = cat $HOME/ohio/myrepos/lib/git-annex
 
 [org]
 checkout = git clone 'ssh://git.codemac.net/git/org.git' 'org'
+pre_commit = emacsclient -a true -e '(org-mobile-pull)'
+post_commit = emacsclient -a true -e '(org-mobile-push)'
 
 #[doc]
 #checkout = 
