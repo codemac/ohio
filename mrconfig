@@ -30,3 +30,6 @@ post_commit = git push origin
 
 [ohio-priv]
 checkout = git clone 'ssh://git.codemac.net/git/ohio-priv.git' 'ohio-priv'
+
+[scm]
+checkout = git clone 'git@github.com:codemac/scm.git' 'scm'
